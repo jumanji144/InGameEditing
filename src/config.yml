@@ -1,1 +1,2 @@
-prefix: "&a"
+prefix: "&a" # Prefix of the plugin
+showlinenumbers: true # Show lines before every line in read output? (true/false)
