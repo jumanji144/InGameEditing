@@ -57,7 +57,7 @@ public class EditCommand implements CommandExecutor {
 						try {
 							configs.get(sender.getName()).load(file);
 						} catch (IOException | InvalidConfigurationException e) {
-							sender.sendMessage("§cError while trying to reload. Is the config valid?");
+							sender.sendMessage(Main.errorprefix + " while trying to reload. Is the config valid?");
 							e.printStackTrace();
 						}
 						sender.sendMessage(Main.prefix + "§7File reloaded!");
@@ -89,6 +89,8 @@ public class EditCommand implements CommandExecutor {
 						session.put(sender.getName(), config);
 						sender.sendMessage(
 								Main.prefix + "§7Started editing session with the file: §a" + config.getName());
+					}else {
+						sender.sendMessage(Main.errorprefix + " File does not exist");
 					}
 				} else if (args[0].equals("get")) {
 					if(session.containsKey(sender.getName())) {
@@ -106,11 +108,19 @@ public class EditCommand implements CommandExecutor {
 					}
 				}else if (args[0].equals("read")) {
 					if (session.containsKey(sender.getName())) {
-						int min = Integer.parseInt(args[1]);
+						int min = 1;
+						try {
+						min = Integer.parseInt(args[1]);
+						}catch (NumberFormatException e) {
+							sender.sendMessage(Main.errorprefix + " expected number");
+							e.printStackTrace();
+							return false;
+						}
 						try {
 							List<String> lines = Files.readAllLines(Paths.get(session.get(sender.getName()).getAbsolutePath()));
 							int max = lines.size();
-							if(min <= max && min > 0) {
+							if(min <= max) {
+								if(min > 0) {
 						    for(int i = min;i < max + 1;i++) {
 						    	
 						    	if(Main.getPlugin(Main.class).getConfig().getBoolean("showlinenumbers")) {
@@ -119,11 +129,14 @@ public class EditCommand implements CommandExecutor {
 						    		sender.sendMessage(lines.get(i-1));
 						    	}
 						    }
+								}else {
+									sender.sendMessage(Main.errorprefix + " minimum needs to be bigger than 0");
+								}
 							}else {
-								sender.sendMessage("§cError the file only has " + lines.size() + " line(s)!");
+								sender.sendMessage(Main.errorprefix + " the file only has " + lines.size() + " line(s)!");
 							}
 						} catch (IOException e) {
-							// TODO Auto-generated catch block
+							sender.sendMessage(Main.errorprefix + " while trying to save file. Is the file still there?");
 							e.printStackTrace();
 						}
 					} else {
@@ -158,13 +171,15 @@ public class EditCommand implements CommandExecutor {
 							sender.sendMessage(
 									Main.prefix + "§7Started editing session with the file: §a" + config.getName() + " §7from the plugin: §a" + PluginUtils.getPluginByName(args[1]).getName());
 						}else {
-							sender.sendMessage("§cError file not found!");
+							sender.sendMessage(Main.errorprefix + " file not found!");
 						}
 					}else if(new File(name).exists()){
 						File config = new File(name);
 						session.put(sender.getName(), config);
 						sender.sendMessage(
 								Main.prefix + "§7Started editing session with the file: §a" + config.getName());
+					}else {
+						sender.sendMessage(Main.errorprefix + " File does not exist");
 					}
 				} else if (args[0].equals("set")) {
 					if (session.containsKey(sender.getName())) {
@@ -184,12 +199,27 @@ public class EditCommand implements CommandExecutor {
 					}
 				} else if (args[0].equals("read")) {
 					if (session.containsKey(sender.getName())) {
-						int min = Integer.parseInt(args[1]);
-						int max = Integer.parseInt(args[2]);
+						int min = 1;
+						try {
+						min = Integer.parseInt(args[1]);
+						}catch (NumberFormatException e) {
+							sender.sendMessage(Main.errorprefix + " expected number");
+							e.printStackTrace();
+							return false;
+						}
+						int max = 1;
+						try {
+						max = Integer.parseInt(args[2]);
+						}catch (NumberFormatException e) {
+							sender.sendMessage(Main.errorprefix + " expected number");
+							e.printStackTrace();
+							return false;
+						}
 						try {
 							List<String> lines = Files.readAllLines(Paths.get(session.get(sender.getName()).getAbsolutePath()));
 							if(lines.size() >= max) {
-							if(min <= lines.size() && min > 0 && max > 0) {
+							if(min <= lines.size()) {
+								if(min > 0 && max > 0) {
 						    for(int i = min;i < max + 1;i++) {
 						    	if(Main.getPlugin(Main.class).getConfig().getBoolean("showlinenumbers")) {
 						    		sender.sendMessage(i + " " + lines.get(i-1));
@@ -198,13 +228,16 @@ public class EditCommand implements CommandExecutor {
 						    	}
 						    }
 							}else {
-								sender.sendMessage("§cError the file only has " + lines.size() + " line(s)!");
+								sender.sendMessage(Main.errorprefix + " maximum and minimum need to be bigger than 0");
 							}
 							}else {
-								sender.sendMessage("§cError the file only has " + lines.size() + " line(s)!");
+								sender.sendMessage(Main.errorprefix + " the file only has " + lines.size() + " line(s)!");
+							}
+							}else {
+								sender.sendMessage(Main.errorprefix + " the file only has " + lines.size() + " line(s)!");
 							}
 						} catch (IOException e) {
-							sender.sendMessage("§Error while trying to save file. Is the file still there?");
+							sender.sendMessage(Main.errorprefix + " while trying to save file. Is the file still there?");
 							e.printStackTrace();
 						}
 					} else {
@@ -226,7 +259,7 @@ public class EditCommand implements CommandExecutor {
 								sender.sendMessage(Main.prefix + "§7You changed the content of line §a" + args[1] + " §7from: '§a" + previous + "§7' to '§a" + builder.substring(1) + "§7'");
 							}
 						} catch (IOException e) {
-							sender.sendMessage("§Error while trying to save file. Is the file still there?");
+							sender.sendMessage(Main.errorprefix + " while trying to save file. Is the file still there?");
 							e.printStackTrace();
 						}
 					} else {

@@ -1,5 +1,5 @@
 name: InGameEditing
-version: 1.0
+version: 1.1.1Beta
 main: com.nowilltolife.ingameeditor.Main
 commands:
    edit:

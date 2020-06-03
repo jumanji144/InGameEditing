@@ -1,2 +1,3 @@
-prefix: "&a" # Prefix of the plugin
+prefix: '&a&lEDIT &7> &7' # Prefix of the plugin
+errorprefix: '&c&lERROR &7>&c' # Prefix for errors
 showlinenumbers: true # Show lines before every line in read output? (true/false)
