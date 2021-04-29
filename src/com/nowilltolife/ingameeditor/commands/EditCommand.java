@@ -248,7 +248,7 @@ public class EditCommand implements CommandExecutor {
 						int line = Integer.parseInt(args[1]);
 						try {
 							List<String> lines = Files.readAllLines(Paths.get(session.get(sender.getName()).getAbsolutePath()));
-							if(line >= lines.size()) {
+							if(line <= lines.size()) {
 								String previous = lines.get(line-1);
 								StringBuilder builder = new StringBuilder();
 								for (int i = 2; i < args.length; i++) {
@@ -257,6 +257,9 @@ public class EditCommand implements CommandExecutor {
 								lines.set(line-1, builder.substring(1));
 								Files.write(Paths.get(session.get(sender.getName()).getAbsolutePath()), lines, Charset.forName("UTF-8"));
 								sender.sendMessage(Main.prefix + "§7You changed the content of line §a" + args[1] + " §7from: '§a" + previous + "§7' to '§a" + builder.substring(1) + "§7'");
+							}
+							else {
+								sender.sendMessage(Main.errorprefix + " the file only has " + lines.size() + " line(s)!");
 							}
 						} catch (IOException e) {
 							sender.sendMessage(Main.errorprefix + " while trying to save file. Is the file still there?");
